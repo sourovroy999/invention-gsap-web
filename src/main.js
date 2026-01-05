@@ -22,40 +22,40 @@ gsap.set('#first-video', {
 
 
 
-gsap.to('#first-video', {
-  // paused:true,
-  // scaleX:1,
-  // scaleY:1,
-    // start:'top top',
-    rotateX:0,
-    rotateY:0,
-    ease:'power1.inOut',
+// gsap.to('#first-video', {
+//   // paused:true,
+//   // scaleX:1,
+//   // scaleY:1,
+//     // start:'top top',
+//     rotateX:0,
+//     rotateY:0,
+//     ease:'power1.inOut',
 
-    height:'100vh',
-    width:'100vw',
-    // height:'100%',
-    // width:'100%',
-    // rotateY:0,
+//     height:'100vh',
+//     width:'100vw',
+//     // height:'100%',
+//     // width:'100%',
+//     // rotateY:0,
 
-  // maxHeight:'100vh',
-  // maxWidth:'100vw',
-  borderRadius:0,
-  // height:'800px',
-  // width:'1600px',
-  scrollTrigger:{
-    trigger:'#hero',
+//   // maxHeight:'100vh',
+//   // maxWidth:'100vw',
+//   borderRadius:0,
+//   // height:'800px',
+//   // width:'1600px',
+//   scrollTrigger:{
+//     trigger:'#hero',
     
-    pin:true,
-    scrub:true,
-    invalidateOnRefresh:true,
-  //   fastScrollEnd: true, // Prevents "skipping" to the end
-  // refreshPriority: 1   // Ensures this trigger refreshes before others
+//     pin:true,
+//     scrub:true,
+//     invalidateOnRefresh:true,
+//   //   fastScrollEnd: true, // Prevents "skipping" to the end
+//   // refreshPriority: 1   // Ensures this trigger refreshes before others
 
   
   
 
-  }
-})
+//   }
+// })
 
 // gsap.set('#test-red',{
 //   transformPerspective:800,
@@ -87,46 +87,66 @@ gsap.to('#first-video', {
 //   }
 // })
 
+// 1. Capture the ScrollTrigger instance
+const scrollTween = gsap.to('#first-video', {
+  rotateX: 0,
+  rotateY: 0,
+  height: '100vh',
+  width: '100vw',
+  borderRadius: 0,
+  ease: 'none', // 'none' is often better for scrubbed animations
+  scrollTrigger: {
+    trigger: '#hero',
+    pin: true,
+    scrub: true,
+    invalidateOnRefresh: true,
+  }
+});
 
-
+// 2. Mouse move handler
+const hero = document.querySelector('#hero');
 const videoCard = document.querySelector('#first-video');
-const heroSection = document.querySelector('#hero');
 
-heroSection.addEventListener('mousemove', (e) => {
-  const { clientX, clientY } = e;
-  const { left, top, width, height } = videoCard.getBoundingClientRect();
+hero.addEventListener("mousemove", (e) => {
+  // Check if we are past 90% of the scroll animation
+  const progress = scrollTween.scrollTrigger.progress;
+  
+  if (progress > 0.9) {
+    // If nearly full screen, force-level the card
+    gsap.to(videoCard, { rotateX: 0, rotateY: 0, duration: 0.5 });
+  } else {
+    // Calculate tilt
+    const { width, height, left, top } = hero.getBoundingClientRect();
+    const mouseX = e.clientX - left;
+    const mouseY = e.clientY - top;
+    
+    // Range from -1 to 1
+    const xPos = (mouseX / width) - 0.5;
+    const yPos = (mouseY / height) - 0.5;
 
-  // Calculate center of the card
-  const centerX = left + width / 2;
-  const centerY = top + height / 2;
-
-  // Calculate mouse distance from center (-1 to 1)
-  const percentX = (clientX - centerX) / (width / 2);
-  const percentY = (clientY - centerY) / (height / 2);
-
-  // Set max tilt angle (e.g., 15 degrees)
-  const maxRotation = 3;
-
-  gsap.to(videoCard, {
-    rotateY: percentX * maxRotation,
-    rotateX: -percentY * maxRotation, // Negative because moving mouse up should tilt card back
-    ease: 'power2.out',
-    duration: 0.5,
-    overwrite: 'auto' // Important: prevents conflict with ScrollTrigger
-  });
+    // Apply the tilt with a slight duration for smoothness
+    // We add the scroll-based rotateX (10 * (1 - progress)) so it blends
+    const baseRotateX = 10 * (1 - progress); 
+    
+    gsap.to(videoCard, {
+      rotateY: xPos * 8, // Subtle horizontal tilt
+      rotateX: (yPos * -8) + baseRotateX, // Combine mouse tilt with scroll tilt
+      duration: 0.3,
+      ease: "power2.out",
+      overwrite: "auto" // Prevents animation conflicts
+    });
+  }
 });
 
-// Reset tilt when mouse leaves
-heroSection.addEventListener('mouseleave', () => {
-  gsap.to(videoCard, {
-    rotateX: 0,
-    rotateY: 0,
-    ease: 'power2.out',
-    duration: 0.5
+// 3. Reset when mouse leaves
+hero.addEventListener("mouseleave", () => {
+  const progress = scrollTween.scrollTrigger.progress;
+  gsap.to(videoCard, { 
+    rotateX: 10 * (1 - progress), 
+    rotateY: 0, 
+    duration: 1 
   });
 });
-
-
 
 
 
