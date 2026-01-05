@@ -9,3 +9,14 @@
   .about-image {
     @apply absolute left-1/2 top-0 z-20 h-[60vh] w-96 origin-center -translate-x-1/2 overflow-hidden rounded-3xl md:w-[30vw];
   }
+
+
+.hero-2 {
+  /* Essential for the 3D effect depth */
+  perspective: 1000px; 
+}
+
+#first-video {
+  transform-style: preserve-3d;
+  will-change: transform, width, height;
+}
