@@ -130,22 +130,31 @@
       </div>
 
       </div>   -->
-<div id="cursor-dot"></div>
-    <div id="custom-cursor">
-        <span id="cursor-text" class="text-[10px] text-white uppercase tracking-[0.2em] font-bold">Next</span>
+
+    <div id="custom-cursor" class="fixed top-0 left-0 w-24 h-24 bg-white rounded-full flex items-center justify-center text-black font-bold pointer-events-none z-[100] mix-blend-difference scale-0">
+  <span id="cursor-text" class="text-xs tracking-tighter uppercase">Next</span>
+</div>
+
+<div id="carousel-area" class="h-screen overflow-hidden panel w-full will-change-transform absolute text-4xl text-center cursor-none">
+  <div class="h-screen relative w-full overflow-hidden">
+    
+    <div class="carousel-slide text-7xl absolute inset-0 flex items-center justify-center w-full bg-yellow-400 h-full z-[3]">
+      sourov 1
     </div>
 
-    <div id="carousel-area" class="h-screen w-full relative z-20 cursor-none">
-        
-        <div id="progress-wrapper">
-            <div id="main-progress-bar"></div>
-        </div>
+    <div class="carousel-slide text-7xl absolute inset-0 flex items-center justify-center w-full bg-blue-400 h-full z-[2]">
+      sourov 2
+    </div>
 
-        <div class="h-screen relative overflow-hidden">
-            <div class="carousel-slide absolute inset-0 flex items-center justify-center w-full bg-zinc-900 text-white h-full">SOUROV 01</div>
-            <div class="carousel-slide absolute inset-0 flex items-center justify-center w-full bg-zinc-800 text-white h-full">SOUROV 02</div>
-            <div class="carousel-slide absolute inset-0 flex items-center justify-center w-full bg-zinc-700 text-white h-full">SOUROV 03</div>
-        </div>
+    <div class="carousel-slide text-7xl absolute inset-0 flex items-center justify-center w-full bg-fuchsia-400 h-full z-[1]">
+      sourov 3
+    </div>
+
+  </div>   
+</div>
+
+
+
     </div>
 
     <!-- custom cursor and currousal section end -->

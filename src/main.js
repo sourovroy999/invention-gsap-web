@@ -170,3 +170,191 @@ gsap.set('#panel',{
   zIndex: (i, target, targets)=> targets.length-i
 });
 
+
+// const slideTl=gsap.timeline({
+//   defaults:{
+//     delay:4,
+//     duration:0.8,
+//     // repeat:-1,
+//   }
+// },
+
+
+// )
+
+// slideTl.to('#slide3', {xPercent:-100})
+//        .to('#slide2', {xPercent:-100})
+// slideTl.to('#slide2', {xPercent:0})
+//        .to('#slide3', {xPercent:0})
+
+// const slides = document.querySelectorAll(".carousel-slide");
+//         const progressBar = document.querySelector("#main-progress-bar");
+//         const cursor = document.querySelector("#custom-cursor");
+//         const cursorText = document.querySelector("#cursor-text");
+        
+//         let currentIndex = 0;
+//         let isAnimating = false;
+//         const SLIDE_WAIT = 4;
+//         const TRANSITION = 1.2;
+//         const segment = 100 / slides.length;
+
+//         // 1. Initial State
+//         gsap.set(slides, { xPercent: 100 });
+//         gsap.set(slides[0], { xPercent: 0 });
+
+//         // 2. Optimized Magnetic Cursor Logic
+//         const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+//         const mouse = { x: pos.x, y: pos.y };
+        
+//         const xSet = gsap.quickSetter(cursor, "x", "px");
+//         const ySet = gsap.quickSetter(cursor, "y", "px");
+
+//         window.addEventListener("mousemove", e => {
+//             mouse.x = e.clientX;
+//             mouse.y = e.clientY;
+//             cursorText.innerText = mouse.x > window.innerWidth / 2 ? "Next" : "Prev";
+//         });
+
+//         // Ticker for smooth "magnetic" lag
+//         gsap.ticker.add(() => {
+//             const dt = 1.0 - Math.pow(1.0 - 0.15, gsap.ticker.deltaRatio()); // Smoothing factor
+//             pos.x += (mouse.x - pos.x) * dt;
+//             pos.y += (mouse.y - pos.y) * dt;
+//             xSet(pos.x - 48);
+//             ySet(pos.y - 48);
+//         });
+
+//         // 3. Unified Slide Logic
+//         function move(index, dir) {
+//             if (isAnimating) return;
+//             isAnimating = true;
+//             gsap.killTweensOf(progressBar);
+
+//             const tl = gsap.timeline({ onComplete: () => { isAnimating = false; currentIndex = index; autoFill(); } });
+            
+//             gsap.set(slides[index], { xPercent: dir === "next" ? 100 : -100 });
+            
+//             tl.to(slides[currentIndex], { xPercent: dir === "next" ? -100 : 100, duration: TRANSITION, ease: "expo.inOut" }, 0)
+//               .to(slides[index], { xPercent: 0, duration: TRANSITION, ease: "expo.inOut" }, 0)
+//               .to(progressBar, { width: `${index * segment}%`, duration: TRANSITION, ease: "expo.inOut" }, 0);
+//         }
+
+//         function autoFill() {
+//             gsap.to(progressBar, {
+//                 width: `${(currentIndex + 1) * segment}%`,
+//                 duration: SLIDE_WAIT,
+//                 ease: "none",
+//                 onComplete: () => {
+//                     const next = (currentIndex + 1) % slides.length;
+//                     if (next === 0) gsap.set(progressBar, { width: 0 });
+//                     move(next, "next");
+//                 }
+//             });
+//         }
+
+//         // 4. Interactions
+//         document.querySelector("#carousel-area").addEventListener("click", () => {
+//             const isRight = mouse.x > window.innerWidth / 2;
+//             const next = isRight ? (currentIndex + 1) % slides.length : (currentIndex - 1 + slides.length) % slides.length;
+//             move(next, isRight ? "next" : "prev");
+//         });
+
+//         document.body.addEventListener("mouseenter", () => gsap.to(cursor, { scale: 1 }));
+//         document.body.addEventListener("mouseleave", () => gsap.to(cursor, { scale: 0 }));
+
+//         autoFill();
+
+
+const slides = document.querySelectorAll(".carousel-slide");
+        const progressBar = document.querySelector("#main-progress-bar");
+        const cursor = document.querySelector("#custom-cursor");
+        const cursorDot = document.querySelector("#cursor-dot");
+        const cursorText = document.querySelector("#cursor-text");
+        
+        let currentIndex = 0;
+        let isAnimating = false;
+        const SLIDE_WAIT = 4; 
+        const TRANSITION = 1.2;
+        const segment = 100 / slides.length;
+
+        // 1. Setup Slides
+        gsap.set(slides, { xPercent: 100 });
+        gsap.set(slides[0], { xPercent: 0 });
+
+        // 2. Magnetic Logic
+        const pos = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+        const mouse = { x: pos.x, y: pos.y };
+        
+        const xSet = gsap.quickSetter(cursor, "x", "px");
+        const ySet = gsap.quickSetter(cursor, "y", "px");
+        const xDotSet = gsap.quickSetter(cursorDot, "x", "px");
+        const yDotSet = gsap.quickSetter(cursorDot, "y", "px");
+
+        window.addEventListener("mousemove", e => {
+            mouse.x = e.clientX;
+            mouse.y = e.clientY;
+            
+            // Text logic
+            cursorText.innerText = mouse.x > window.innerWidth / 2 ? "Next" : "Prev";
+            
+            // Move Dot instantly
+            xDotSet(mouse.x);
+            yDotSet(mouse.y);
+        });
+
+        // The Magnetic Ticker
+        gsap.ticker.add(() => {
+            const dt = 1.0 - Math.pow(1.0 - 0.15, gsap.ticker.deltaRatio()); 
+            pos.x += (mouse.x - pos.x) * dt;
+            pos.y += (mouse.y - pos.y) * dt;
+            
+            xSet(pos.x - 50); // Offset by half of width (100px / 2)
+            ySet(pos.y - 50);
+        });
+
+        // 3. Carousel Logic
+        function move(index, dir) {
+            if (isAnimating) return;
+            isAnimating = true;
+
+            gsap.killTweensOf(progressBar);
+
+            const tl = gsap.timeline({ 
+                onComplete: () => { 
+                    isAnimating = false; 
+                    currentIndex = index; 
+                    autoFill(); 
+                } 
+            });
+            
+            gsap.set(slides[index], { xPercent: dir === "next" ? 100 : -100 });
+            
+            tl.to(slides[currentIndex], { xPercent: dir === "next" ? -100 : 100, duration: TRANSITION, ease: "expo.inOut" }, 0)
+              .to(slides[index], { xPercent: 0, duration: TRANSITION, ease: "expo.inOut" }, 0)
+              .to(progressBar, { width: `${index * segment}%`, duration: TRANSITION, ease: "expo.inOut" }, 0);
+        }
+
+        function autoFill() {
+            gsap.to(progressBar, {
+                width: `${(currentIndex + 1) * segment}%`,
+                duration: SLIDE_WAIT,
+                ease: "none",
+                onComplete: () => {
+                    const next = (currentIndex + 1) % slides.length;
+                    if (next === 0) gsap.set(progressBar, { width: 0 });
+                    move(next, "next");
+                }
+            });
+        }
+
+        // 4. Interaction
+        document.querySelector("#carousel-area").addEventListener("click", () => {
+            const isRight = mouse.x > window.innerWidth / 2;
+            const next = isRight ? (currentIndex + 1) % slides.length : (currentIndex - 1 + slides.length) % slides.length;
+            move(next, isRight ? "next" : "prev");
+        });
+
+        document.body.addEventListener("mouseenter", () => gsap.to([cursor, cursorDot], { scale: 1, duration: 0.3 }));
+        document.body.addEventListener("mouseleave", () => gsap.to([cursor, cursorDot], { scale: 0, duration: 0.3 }));
+
+        autoFill();

@@ -20,3 +20,79 @@
   transform-style: preserve-3d;
   will-change: transform, width, height;
 }
+
+/* #custom-cursor {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100px; height: 100px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      mix-blend-mode: difference;
+      pointer-events: none;
+      z-index: 9999;
+      transform: scale(0);
+    } */
+
+/* The full-width background track */
+        #progress-wrapper {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(255, 255, 255, 0.1);
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        /* The single liquid bar */
+        #main-progress-bar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 100%;
+            background: #fff;
+            width: 0%;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.4);
+            will-change: width;
+        }
+
+        /* Precision Dot - Follows Instantly */
+        #cursor-dot {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 101;
+            mix-blend-difference: exclusion;
+            transform: translate(-50%, -50%);
+        }
+
+        /* Magnetic Circle - Lags Behind */
+        #custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100px;
+            height: 100px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            z-index: 100;
+            mix-blend-difference: exclusion;
+            scale: 0;
+        }
+
+        .carousel-slide {
+            font-size: 10vw;
+            line-height: 1;
+            letter-spacing: -0.05em;
+        }
